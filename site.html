@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منصة الإعلانات</title>
+<style>
+body{font-family:tahoma;background:#0f172a;color:white;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}
+.card{background:#1e293b;padding:20px;border-radius:15px;width:350px;box-shadow:0 0 20px #000}
+input,button{width:100%;padding:10px;margin:5px 0;border:none;border-radius:8px}
+button{background:#22c55e;color:white;font-weight:bold;cursor:pointer}
+.hidden{display:none}
+.small{font-size:13px;color:#cbd5e1}
+</style>
+</head>
+<body>
+
+<div id="login" class="card">
+<h3>هل لديك حساب بالفعل؟ سجل الدخول</h3>
+<input id="loginUser" placeholder="البريد الالكتروني أو الهاتف">
+<input id="loginPass" type="password" placeholder="كلمة المرور">
+<button onclick="login()">تسجيل الدخول</button>
+<hr>
+<h3>ليس لديك حساب؟ أنشئ حساب جديد</h3>
+<input id="name" placeholder="الاسم">
+<input id="father" placeholder="الاب">
+<input id="grand" placeholder="الجد">
+<input id="regUser" placeholder="البريد أو الهاتف">
+<input id="regPass" type="password" placeholder="كلمة المرور">
+<input id="regPass2" type="password" placeholder="تأكيد كلمة المرور">
+<button onclick="register()">التالي</button>
+</div>
+
+<div id="confirm" class="card hidden">
+<h3>ادخل رمز التأكيد</h3>
+<input id="codeInput" placeholder="الكود">
+<button onclick="confirmCode()">التأكيد</button>
+<p class="small" id="debug"></p>
+</div>
+
+<div id="home" class="card hidden">
+<h3>الصفحة الرئيسية</h3>
+<p>رصيدك: <span id="balance">0</span>$</p>
+<button onclick="watchAd()">شاهد إعلان</button>
+<button onclick="paymentInfo()">ادخال معلومات حساب الدفع الالكتروني</button>
+<button onclick="logout()">تسجيل الخروج</button>
+<div id="payment" class="hidden">
+<input id="payName" placeholder="اسم الحساب">
+<input id="payId" placeholder="رمز الحساب">
+<button onclick="savePayment()">حفظ البطاقة باسم</button>
+</div>
+</div>
+
+<script>
+let generatedCode="";
+
+function show(id){
+login.classList.add('hidden');confirm.classList.add('hidden');home.classList.add('hidden');
+document.getElementById(id).classList.remove('hidden');
+}
+
+function register(){
+let pass=regPass.value;
+if(pass!==regPass2.value){alert("كلمة المرور غير متطابقة");return}
+localStorage.setItem("user",regUser.value);
+localStorage.setItem("pass",pass);
+generatedCode=Math.floor(100000+Math.random()*900000).toString();
+debug.innerText="(للتجربة) الكود: "+generatedCode;
+show('confirm');
+}
+
+function confirmCode(){
+if(codeInput.value===generatedCode){show('home');updateBalance()}else alert("رمز خاطئ");
+}
+
+function login(){
+if(loginUser.value===localStorage.getItem("user")&&loginPass.value===localStorage.getItem("pass")){
+show('home');updateBalance();
+}else alert("بيانات غير صحيحة");
+}
+
+function updateBalance(){balance.innerText=localStorage.getItem("balance")||0}
+
+function watchAd(){
+alert("تم مشاهدة اعلان!");
+let b=parseFloat(localStorage.getItem("balance")||0)+0.1;
+localStorage.setItem("balance",b);
+updateBalance();
+}
+
+function paymentInfo(){payment.classList.toggle('hidden')}
+
+function savePayment(){
+localStorage.setItem("payName",payName.value);
+localStorage.setItem("payId",payId.value);
+alert("تم حفظ معلومات الدفع");
+}
+
+function logout(){show('login')}
+</script>
+
+</body>
+</html>
